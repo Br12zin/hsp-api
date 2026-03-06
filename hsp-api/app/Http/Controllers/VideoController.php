@@ -61,28 +61,40 @@ class VideoController extends Controller
      */
     public function upload(Request $request)
     {
-        $request->validate([
-            'video' => 'required|file|mimetypes:video/mp4|max:102400', // 100MB max
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string'
-        ]);
-
         try {
-            // Salvar o arquivo
+            // Validação
+            $request->validate([
+                'video' => 'required|file|mimetypes:video/mp4|max:102400',
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string'
+            ]);
+
+            // Pega o arquivo
             $file = $request->file('video');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $path = $file->storeAs('public/uploads', $fileName);
+            
+            // Gera nome único (mantém extensão original)
+            $extension = $file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $extension;
+            
+            // 🔥 CAMINHO CORRETO: storage/app/public/uploads
+            $destinationPath = storage_path('app/public/uploads');
+            
+            // Cria a pasta se não existir
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+            
+            // Move o arquivo
+            $file->move($destinationPath, $fileName);
+            
+            // URL pública (via storage link)
+            $url = '/storage/uploads/' . $fileName;
 
-            // URL pública do arquivo
-            $url = Storage::url($path);
-
-            // Criar o vídeo no banco
+            // Salva no banco
             $video = Video::create([
                 'title' => $request->title,
-                'description' => $request->description,
+                'description' => $request->description ?? '',
                 'url' => $url,
-                'thumbnail' => '',
-                'duration' => '',
                 'user_id' => auth()->id()
             ]);
 
@@ -98,10 +110,18 @@ class VideoController extends Controller
                 ]
             ], 201);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro de validação',
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao fazer upload: ' . $e->getMessage()
+                'message' => 'Erro: ' . $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
             ], 500);
         }
     }
