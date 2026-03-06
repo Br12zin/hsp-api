@@ -22,4 +22,7 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    AddType video/mp4 .mp4
+    AddType video/mp4 .m4v
 </IfModule>
