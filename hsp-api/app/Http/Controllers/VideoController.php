@@ -26,7 +26,6 @@ class VideoController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'url' => 'required|string',
-            'thumbnail' => 'nullable|string',
             'duration' => 'nullable|string'
         ]);
 
