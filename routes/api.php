@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 // ===========================================
 // ROTAS PÚBLICAS (não precisam de token)
@@ -37,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // ROTAS ADMINISTRATIVAS (precisam de token + admin)
     // =======================================
     Route::middleware('admin')->prefix('admin')->group(function () {
+        
         // Usuários
         Route::get('/users', [AdminController::class, 'listUsers']);
         Route::get('/users/{id}', [AdminController::class, 'getUser']);
@@ -51,6 +53,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/videos/{id}', [VideoController::class, 'destroy']);
 
          // 🔥 NOVA ROTA DE UPLOAD (AQUI!)
-        Route::post('/upload', [VideoController::class, 'upload']);
+        Route::post('/videos/upload', [VideoController::class, 'upload']);
     });
 });
