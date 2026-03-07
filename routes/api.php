@@ -53,6 +53,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/videos/{id}', [VideoController::class, 'destroy']);
 
          // 🔥 NOVA ROTA DE UPLOAD (AQUI!)
-        Route::post('/videos/upload', [VideoController::class, 'upload']);
+        Route::post('/upload', [VideoController::class, 'upload']);
     });
 });

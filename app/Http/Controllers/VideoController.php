@@ -69,7 +69,7 @@ class VideoController extends Controller
         // apagar arquivo se existir
         if ($video->url && str_contains($video->url, 'storage/uploads')) {
 
-            $path = str_replace(asset('storage') . '/', '', $video->url);
+            $path = str_replace('/storage/', '', $video->url);
 
             Storage::disk('public')->delete($path);
 
@@ -103,14 +103,14 @@ class VideoController extends Controller
             $path = $file->storeAs('uploads', $fileName, 'public');
 
             // cria url pública
-            $url = asset('storage/' . $path);
+            $url = '/storage/' . $path;
 
             // salva no banco
             $video = Video::create([
                 'title' => $request->title,
                 'description' => $request->description ?? '',
                 'url' => $url,
-                'user_id' => auth::check() ? auth::id() : 1
+                'user_id' => Auth::check() ? Auth::id() : 1
             ]);
 
             return response()->json([
