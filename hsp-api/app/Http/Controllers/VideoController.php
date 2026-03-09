@@ -33,7 +33,6 @@ class VideoController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'url' => $request->url,
-            'thumbnail' => $request->thumbnail,
             'duration' => $request->duration,
             'user_id' => auth()->id()
         ]);
