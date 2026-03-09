@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 // ===========================================
 // ROTAS PÚBLICAS (não precisam de token)
@@ -19,21 +20,25 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'forgot']);
 Route::post('/validate-token', [ForgotPasswordController::class, 'validateToken']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'reset']);
 
+//===========================
+// VÍDEOS PÚBLICOS
+//===========================
+    Route::get('/videos', [VideoController::class, 'index']);
+    Route::get('/videos/{id}', [VideoController::class, 'show']);
+
 // ===========================================
 // ROTAS PROTEGIDAS (precisam de token)
 // ===========================================
 Route::middleware('auth:sanctum')->group(function () {
+
     // Dados do usuário logado
     Route::get('/user', [AuthController::class, 'user']);
-    
-    // VÍDEOS (qualquer usuário logado)
-    Route::get('/videos', [VideoController::class, 'index']);
-    Route::get('/videos/{id}', [VideoController::class, 'show']);
     
     // =======================================
     // ROTAS ADMINISTRATIVAS (precisam de token + admin)
     // =======================================
     Route::middleware('admin')->prefix('admin')->group(function () {
+        
         // Usuários
         Route::get('/users', [AdminController::class, 'listUsers']);
         Route::get('/users/{id}', [AdminController::class, 'getUser']);
